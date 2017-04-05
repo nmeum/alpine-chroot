@@ -21,8 +21,14 @@ The following scripts are provided by this software:
 	* Drop in replacement for abuild using a chroot
 	* Should only work on Alpine Linux, requires sudo
 
+See also
+--------
+
+Fabled's alpine-chroot repository:
+	https://git.alpinelinux.org/cgit/user/fab/alpine-chroot/
+
 License
-=======
+-------
 
 This program is free software: you can redistribute it and/or
 modify it under the terms of the GNU Affero General Public
