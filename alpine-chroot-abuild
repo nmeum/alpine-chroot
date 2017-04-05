@@ -8,7 +8,7 @@ set -e
 ##
 
 APKBUILD="${APKBUILD:-./APKBUILD}"
-. /usr/share/abuild/functions.sh || exit 1
+. /usr/share/abuild/functions.sh
 
 ##
 # Functions
