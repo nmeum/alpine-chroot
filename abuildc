@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+BASEDIR="/mnt"
+DIRNAME="alpine-chroot-$(basename "$(pwd)")"
+
+CHROOT="${BASEDIR}"/"${DIRNAME}"
+[ -d "${CHROOT}" ] || \
+	sudo alpine-chroot-create -c "${CHROOT}"
+
+sudo -E -s alpine-chroot-abuild "${CHROOT}" $@
+sudo alpine-chroot-destroy "${CHROOT}"

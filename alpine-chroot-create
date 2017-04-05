@@ -1,0 +1,98 @@
+#!/bin/sh
+# Creates a new alpine chroot.
+
+set -e
+
+##
+# Default values
+##
+
+ARCH="$(uname -m)"
+RELEASE="edge"
+CHROOT="alpine-chroot-${RELEASE}-${ARCH}"
+MIRROR="http://dl-cdn.alpinelinux.org/alpine"
+APKTOOL="$(command -v apk 2>&1)"
+
+if [ -d "/etc/apk/keys" ]; then
+	KEYDIR="/etc/apk/keys"
+else
+	KEYDIR=""
+fi
+
+##
+# Functions
+##
+
+create_chroot() {
+	mkdir -p "${CHROOT}"/etc/apk/
+	if [ -n "${KEYDIR}" ]; then
+		cp -r "${KEYDIR}"/ "${CHROOT}"/etc/apk/keys
+	else
+		APKTOOL="${APKTOOL} --allow-untrusted"
+	fi
+
+	repos="main community"
+	if [ "${RELEASE}" = "edge" ]; then
+		repos="${repos} testing"
+	fi
+
+	echo "# Package repositories and mirrors" \
+		> "${CHROOT}"/etc/apk/repositories
+	for repo in ${repos}; do
+		echo "${MIRROR}/${RELEASE}/${repo}" \
+			>> "${CHROOT}"/etc/apk/repositories
+	done
+
+	"${APKTOOL}" --initdb \
+		--root "${CHROOT}" \
+		--arch "${ARCH}" \
+		--update-cache \
+		add alpine-base
+
+	mkdir -p "${CHROOT}"/dev
+	mknod -m 0666 "${CHROOT}"/dev/full c 1 7
+	mknod -m 0666 "${CHROOT}"/dev/ptmx c 5 2
+	mknod -m 0644 "${CHROOT}"/dev/random c 1 8
+	mknod -m 0644 "${CHROOT}"/dev/urandom c 1 9
+	mknod -m 0666 "${CHROOT}"/dev/zero c 1 5
+	mknod -m 0666 "${CHROOT}"/dev/tty c 5 0
+
+	mkdir -p "${CHROOT}"/proc
+	mount --bind /proc "${CHROOT}"/proc
+
+	cp /etc/resolv.conf "${CHROOT}"/etc/resolv.conf
+}
+
+##
+# Go for it!
+##
+
+if [ $(id -u) -ne 0 ]; then
+	echo "${0##*/} has to be started as root." 1>&2
+	exit 1
+fi
+
+while getopts a:c:r:k:m:p: flag; do
+	case "${flag}" in
+		a) ARCH="${OPTARG}"    ;;
+		c) CHROOT="${OPTARG}"  ;;
+		r) RELEASE="${OPTARG}" ;;
+		k) KEYDIR="${OPTARG}"  ;;
+		m) MIRROR="${OPTARG}"  ;;
+		p) APKTOOL="${OPTARG}" ;;
+	esac
+done
+
+if [ ! -x "${APKTOOL}" ]; then
+	echo "Couldn't find apk(1). Either add it to your \$PATH" 1>&2
+	echo "or specify the path to your apk tool using the -p" 1>&2
+	echo "command line flag. Also make sure that it is executable." 1>&2
+	exit 1
+fi
+
+if [ -d "${CHROOT}" ]; then
+	echo "Chroot '${CHROOT}' already exists."
+	exit 0
+fi
+
+create_chroot
