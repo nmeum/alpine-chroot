@@ -33,21 +33,25 @@ chroot_conf() {
 	chmod 770 "${REPODEST}" && chgrp abuild "${REPODEST}"
 
 	cp "${ABUILD_CONF}" "${root}"/etc/abuild.conf
+	echo "ABUILD_USERCONF=/tmp/abuild.conf" >> \
+		"${root}"/etc/abuild.conf
 	mount -o ro --bind "${ABUILD_USERDIR}" \
 		"${root}"/home/buildozer/.abuild
+
+	cp "${ABUILD_USERCONF}" "${root}"/tmp/abuild.conf.orig
+	echo ". /tmp/abuild.conf.orig" \
+		> "${root}"/tmp/abuild.conf
+
+	echo "ABUILD_USERDIR=/home/buildozer/.abuild" \
+		>> "${root}"/tmp/abuild.conf
+	echo "REPODEST=/home/buildozer/packages" \
+		>> "${root}"/tmp/abuild.conf
+	echo "SRCDEST=/var/cache/distfiles" \
+		>> "${root}"/tmp/abuild.conf
 
 	mount --bind "${APORTSDIR}" "${root}"/home/buildozer/aports
 	mount --bind "${REPODEST}"  "${root}"/home/buildozer/packages
 	mount --bind "${SRCDEST}"   "${root}"/var/cache/distfiles
-
-	# FIXME doesn't work if the user has custom values for
-	# these variables in his local abuild.conf in his $HOME.
-	echo "ABUILD_USERDIR=/home/buildozer/.abuild" \
-		>> "${root}"/etc/abuild.conf
-	echo "REPODEST=/home/buildozer/packages" \
-		>> "${root}"/etc/abuild.conf
-	echo "SRCDEST=/var/cache/distfiles" \
-		>> "${root}"/etc/abuild.conf
 }
 
 chroot_build() {
@@ -83,7 +87,9 @@ if [ ! -d "${chroot}" ]; then
 	exit 1
 fi
 
+# TODO: Don't run this unconditionally
 chroot_conf "${chroot}"
+
 if [ $# -ge 2 ]; then
 	shift
 	chroot_build "${chroot}" $@
