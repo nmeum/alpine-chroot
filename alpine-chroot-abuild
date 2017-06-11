@@ -64,7 +64,7 @@ chroot_build() {
 	esac
 
 	shift
-	chroot "${root}" /usr/bin/su - buildozer \
+	chroot "${root}" /bin/su - buildozer \
 		-c "cd aports/${dir} && abuild ${@}"
 }
 
