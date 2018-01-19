@@ -14,9 +14,9 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 for chroot in $@; do
-	for mountpoint in $(chroot "${chroot}" /bin/mount | cut -d ' ' -f3); do
-		umount -l "${chroot}"/"${mountpoint}"
+	for mountpoint in $(mount | cut -d " " -f3 | grep "^${chroot}"); do
+		umount -l "${mountpoint}"
 	done
 
-	rm -rf "${chroot}"
+	rm -i -rf "${chroot}"
 done
