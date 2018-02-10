@@ -5,6 +5,8 @@ set -e
 BASEDIR="/mnt"
 DIRNAME="alpine-chroot-$(basename "$(pwd)")"
 
+abuild sanitycheck || exit 1
+
 CHROOT="${BASEDIR}"/"${DIRNAME}"
 [ -d "${CHROOT}" ] || \
 	sudo alpine-chroot-create -c "${CHROOT}"
