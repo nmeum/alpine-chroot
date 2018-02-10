@@ -24,8 +24,8 @@ The following scripts are provided by this software:
 See also
 --------
 
-Fabled's alpine-chroot repository:
-	https://git.alpinelinux.org/cgit/user/fab/alpine-chroot/
+* Fabian Affolters alpine-chroot repository: https://git.alpinelinux.org/cgit/user/fab/alpine-chroot/
+* Jakub Jirutka alpine-chroot-install: https://github.com/alpinelinux/alpine-chroot-install
 
 License
 -------
