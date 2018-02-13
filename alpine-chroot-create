@@ -49,11 +49,14 @@ create_chroot() {
 		--update-cache \
 		add alpine-base
 
-	mkdir -p "${CHROOT}"/dev
-	mount -v --rbind /dev "${CHROOT}"/dev
-
 	mkdir -p "${CHROOT}"/proc
 	mount -v -t proc none "${CHROOT}"/proc
+
+	for directory in dev sys run; do
+		mkdir -p "${CHROOT}/${directory}"
+		mount -v --rbind "/${directory}" \
+			"${CHROOT}/${directory}"
+	done
 
 	cp /etc/resolv.conf "${CHROOT}"/etc/resolv.conf
 }
