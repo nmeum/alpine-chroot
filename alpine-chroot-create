@@ -58,7 +58,7 @@ create_chroot() {
 			"${CHROOT}/${directory}"
 	done
 
-	cp /etc/resolv.conf "${CHROOT}"/etc/resolv.conf
+	cp -L /etc/resolv.conf "${CHROOT}"/etc/resolv.conf
 }
 
 ##
