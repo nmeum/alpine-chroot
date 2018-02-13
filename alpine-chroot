@@ -3,8 +3,28 @@
 
 set -e
 
+##
+# Variables
+##
+
 CHROOT=/usr/sbin/chroot
 USER=root
+
+##
+# Functions
+##
+
+mount_me_maybe() {
+	mountpoint="${1}"
+	shift
+
+	busybox mountpoint -q "${mountpoint}" && return
+	mount "$@" "${mountpoint}"
+}
+
+##
+# Go for it!
+##
 
 if [ $(id -u) -ne 0 ]; then
 	echo "${0##*/} has to be started as root." 1>&2
@@ -30,7 +50,11 @@ else
 	shift
 fi
 
-# TODO: mount /dev, /proc, /sys and others
+mount_me_maybe "${chrootdir}"/proc -t proc none
+mount_me_maybe "${chrootdir}"/dev  --rbind /dev
+mount_me_maybe "${chrootdir}"/sys  --rbind /sys
+mount_me_maybe "${chrootdir}"/run  --rbind /run
+
 # TODO: properly handle /etc/resolv.conf
 
 exec env -i "${CHROOT}" "${chrootdir}" "$@"
