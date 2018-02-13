@@ -14,9 +14,9 @@ The following scripts are provided by this software:
 * `alpine-chroot-create`:
 	* Creates and configures a new Alpine Linux chroot
 	* Should work on any Linux distribution, requires apk
-* `alpine-chroot-destroy`:
-	* Removes an existing chroot, unmounting all mounts before doing so
-	* Should work on any Linux distribution
+* `alpine-chroot-umount`:
+	* Removes all mounts of an existing Alpine Linux chroot
+	* Should work on any Linux distribution, requires busybox
 
 See also
 --------

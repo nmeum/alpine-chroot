@@ -1,5 +1,5 @@
 #!/bin/sh
-# Removes an existing alpine chroot.
+# umount all mountpoints of an existing alpine chroot.
 
 set -e
 
@@ -14,9 +14,12 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 for chroot in $@; do
+	for mountpoint in /dev /sys /run /proc; do
+		busybox mountpoint -q "${chroot}/${mountpoint}" && \
+			umount -l "${chroot}/${mountpoint}"
+	done
+
 	for mountpoint in $(mount | cut -d " " -f3 | grep "^${chroot}"); do
 		umount -l "${mountpoint}"
 	done
-
-	rm -i -rf "${chroot}"
 done
