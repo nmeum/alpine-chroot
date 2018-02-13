@@ -8,6 +8,9 @@ Utilities
 
 The following scripts are provided by this software:
 
+* `alpine-chroot`:
+	* Chroots into an existing Alpine Linux chroot.
+	* Should work on any Linux distribution
 * `alpine-chroot-create`:
 	* Creates and configures a new Alpine Linux chroot
 	* Should work on any Linux distribution, requires apk
