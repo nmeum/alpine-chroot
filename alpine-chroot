@@ -55,6 +55,5 @@ mount_me_maybe "${chrootdir}"/dev  --rbind /dev
 mount_me_maybe "${chrootdir}"/sys  --rbind /sys
 mount_me_maybe "${chrootdir}"/run  --rbind /run
 
-# TODO: properly handle /etc/resolv.conf
-
+cp -u -L /etc/resolv.conf "${chrootdir}/etc/resolv.conf"
 exec env -i "${CHROOT}" "${chrootdir}" "$@"

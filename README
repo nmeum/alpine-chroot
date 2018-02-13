@@ -10,7 +10,7 @@ The following scripts are provided by this software:
 
 * `alpine-chroot`:
 	* Chroots into an existing Alpine Linux chroot.
-	* Should work on any Linux distribution
+	* Should work on any Linux distribution, requires cp(1) with -u
 * `alpine-chroot-create`:
 	* Creates and configures a new Alpine Linux chroot
 	* Should work on any Linux distribution, requires apk
